@@ -6,7 +6,7 @@ param(
 
 if ($Help) {
     Write-Host "用法：.\auto_commit.ps1 [-DryRun] [-NoAI]" -ForegroundColor Cyan
-    Write-Host ""
+    Write-Host "1"
     Write-Host "作用：" -ForegroundColor Cyan
     Write-Host "  自动将工作区改动加入暂存区（git add -A），并生成中文提交信息后提交。" -ForegroundColor Cyan
     Write-Host ""
