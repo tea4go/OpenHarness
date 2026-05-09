@@ -1182,7 +1182,7 @@ class _OkTool(BaseTool):
 
     async def execute(self, arguments: BaseModel, context: ToolExecutionContext) -> ToolResult:
         del arguments, context
-        return ToolResult(output="ok")
+        return ToolResult(output="ok", metadata={"sentinel": "metadata"})
 
 
 class _BoomTool(BaseTool):
@@ -1340,6 +1340,7 @@ async def test_query_engine_synthesizes_tool_result_when_parallel_tool_raises(tm
     assert set(completed_by_name) == {"ok_tool", "boom_tool"}
     assert completed_by_name["ok_tool"].is_error is False
     assert completed_by_name["ok_tool"].output == "ok"
+    assert completed_by_name["ok_tool"].metadata == {"sentinel": "metadata"}
     assert completed_by_name["boom_tool"].is_error is True
     assert "RuntimeError" in completed_by_name["boom_tool"].output
     assert "boom" in completed_by_name["boom_tool"].output

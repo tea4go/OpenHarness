@@ -825,6 +825,7 @@ async def run_query(
                 tool_name=tc.name,
                 output=result.content,
                 is_error=result.is_error,
+                metadata=result.result_metadata,
             ), None
             tool_results = [result]
         else:
@@ -863,6 +864,7 @@ async def run_query(
                     tool_name=tc.name,
                     output=result.content,
                     is_error=result.is_error,
+                    metadata=result.result_metadata,
                 ), None
 
         messages.append(ConversationMessage(role="user", content=tool_results))
@@ -981,6 +983,7 @@ async def _execute_tool_call(
         tool_use_id=tool_use_id,
         content=inline_output,
         is_error=result.is_error,
+        result_metadata=dict(result.metadata or {}),
     )
     _record_tool_carryover(
         context,
