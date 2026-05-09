@@ -1,15 +1,3 @@
-<#
-.SYNOPSIS
-    通过合并方式将上游 HKUDS/OpenHarness:main 同步到本地 main 分支。
-.DESCRIPTION
-    获取上游 HKUDS/OpenHarness:main 的更新，显示即将引入的提交，并将其合并到
-    本地 master 分支。要求工作目录干净，且当前处于 master 分支。
-    不会自动推送。
-
-    用法：
-      .\scripts\sync-upstream.ps1
-#>
-
 $ErrorActionPreference = 'Stop'
 
 $UpstreamUrl   = "https://github.com/HKUDS/OpenHarness.git"
