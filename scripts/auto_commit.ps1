@@ -12,7 +12,7 @@ if ($Help) {
     Write-Host ""
     Write-Host "参数：" -ForegroundColor Cyan
     Write-Host "  -DryRun   只生成提交信息并展示，不执行 git commit" -ForegroundColor Cyan
-    Write-Host "  -NoAI     不调用 jcode，使用兜底提交信息" -ForegroundColor Cyan
+    Write-Host "  -NoAI     不调用 claude，使用兜底提交信息" -ForegroundColor Cyan
     exit 0
 }
 
@@ -47,8 +47,8 @@ if ([string]::IsNullOrWhiteSpace($cached)) {
 $commitMessage = $null
 
 if (-not $NoAI) {
-    $jcode = Get-Command jcode -ErrorAction SilentlyContinue
-    if ($jcode) {
+    $claude = Get-Command claude -ErrorAction SilentlyContinue
+    if ($claude) {
         $names = (git diff --cached --name-status --no-renames | Select-Object -First 200) -join "\n"
         $diff = git diff --cached --no-color | Out-String
         if ($diff.Length -gt 6000) { $diff = $diff.Substring(0, 6000) }
@@ -73,9 +73,9 @@ if (-not $NoAI) {
         $prompt = $prompt -replace "(`r`n|`n|`r)", "\\n"
         $prompt = $prompt.Replace('"', "'")
 
-        Write-Host "正在调用 jcode 生成提交信息..."
-        Write-Host "$($jcode.Source) --quiet run `"<prompt>`"" -ForegroundColor DarkGray
-        $commitMessage = & $jcode.Source --quiet run "$prompt" 2>$null
+        Write-Host "正在调用 claude 生成提交信息..."
+        Write-Host "$($claude.Source) -p `"<prompt>`"" -ForegroundColor DarkGray
+        $commitMessage = & $claude.Source -p "$prompt" 2>$null
         if ($commitMessage) {
             $commitMessage = $commitMessage -replace "`r", ""
             $commitMessage = $commitMessage.Trim()
@@ -98,7 +98,7 @@ if ($DryRun) {
     exit 0
 }
 
-$tmp = Join-Path $env:TEMP ("jcode-commit-message-{0}.txt" -f ([guid]::NewGuid().ToString('N')))
+$tmp = Join-Path $env:TEMP ("claude-commit-message-{0}.txt" -f ([guid]::NewGuid().ToString('N')))
 try {
     [System.IO.File]::WriteAllText($tmp, $commitMessage, [System.Text.UTF8Encoding]::new($false))
     git commit -F $tmp
